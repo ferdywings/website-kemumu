@@ -164,10 +164,7 @@ function MainApp() {
     const saved = localStorage.getItem("beritaList");
     return saved ? JSON.parse(saved) : beritaList;
   });
-  const [wisata, setWisata] = useState(() => {
-    const saved = localStorage.getItem("wisataList");
-    return saved ? JSON.parse(saved) : defaultWisataList;
-  });
+  const [wisata, setWisata] = useState(defaultWisataList);
 
   useEffect(() => {
     const syncBerita = () => {
@@ -176,15 +173,6 @@ function MainApp() {
     };
     window.addEventListener("storage", syncBerita);
     return () => window.removeEventListener("storage", syncBerita);
-  }, []);
-
-  useEffect(() => {
-    const syncWisata = () => {
-      const saved = localStorage.getItem("wisataList");
-      setWisata(saved ? JSON.parse(saved) : defaultWisataList);
-    };
-    window.addEventListener("storage", syncWisata);
-    return () => window.removeEventListener("storage", syncWisata);
   }, []);
 
   // Fungsi untuk handle klik nav agar langsung aktif
@@ -449,10 +437,7 @@ function App() {
 
 function WisataDeskripsiWrapper() {
   const { id } = require("react-router-dom").useParams();
-  const wisataList = (() => {
-    const saved = localStorage.getItem("wisataList");
-    return saved ? JSON.parse(saved) : defaultWisataList;
-  })();
+  const wisataList = defaultWisataList;
   const wisata = wisataList.find((w) => w.id === id);
   return <WisataDeskripsi wisata={wisata} />;
 }
@@ -464,22 +449,16 @@ function AdminBerita() {
     const saved = localStorage.getItem("beritaList");
     return saved ? JSON.parse(saved) : beritaList;
   });
-  const [wisata, setWisata] = useState(() => {
-    const saved = localStorage.getItem("wisataList");
-    return saved ? JSON.parse(saved) : defaultWisataList;
-  });
+  const [wisata, setWisata] = useState(defaultWisataList);
   const [form, setForm] = useState({ judul: "", tanggal: "", ringkasan: "" });
   const [editIndex, setEditIndex] = useState(null);
   const ADMIN_PASS = "kemumu123";
   const navigate = useNavigate();
 
-  // Simpan ke localStorage setiap ada perubahan
+  // Simpan ke localStorage setiap ada perubahan berita saja
   useEffect(() => {
     localStorage.setItem("beritaList", JSON.stringify(berita));
   }, [berita]);
-  useEffect(() => {
-    localStorage.setItem("wisataList", JSON.stringify(wisata));
-  }, [wisata]);
 
   const handleLogin = (e) => {
     e.preventDefault();
