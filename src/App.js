@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { BrowserRouter as Router, Route, Routes, Link, useNavigate, useLocation } from "react-router-dom";
+import { BrowserRouter as Router, Route, Routes, Link, useNavigate, useLocation, useParams } from "react-router-dom";
 import "./App.css";
 
 // Data wisata
@@ -157,14 +157,13 @@ function KKNKelompokPage() {
   );
 }
 
-function MainApp() {
+function MainApp({ wisata, setWisata }) {
   const location = useLocation();
   const [activeSection, setActiveSection] = useState("beranda");
   const [berita, setBerita] = useState(() => {
     const saved = localStorage.getItem("beritaList");
     return saved ? JSON.parse(saved) : beritaList;
   });
-  const [wisata, setWisata] = useState(defaultWisataList);
 
   useEffect(() => {
     const syncBerita = () => {
@@ -423,33 +422,32 @@ function MainApp() {
 }
 
 function App() {
+  const [wisata, setWisata] = useState(defaultWisataList);
   return (
     <Router>
       <Routes>
-        <Route path="/*" element={<MainApp />} />
-        <Route path="/wisata/:id" element={<WisataDeskripsiWrapper />} />
-        <Route path="/admin-berita" element={<AdminBerita />} />
+        <Route path="/*" element={<MainApp wisata={wisata} setWisata={setWisata} />} />
+        <Route path="/wisata/:id" element={<WisataDeskripsiWrapper wisata={wisata} />} />
+        <Route path="/admin-berita" element={<AdminBerita wisata={wisata} setWisata={setWisata} />} />
         <Route path="/kkn-kelompok" element={<KKNKelompokPage />} />
       </Routes>
     </Router>
   );
 }
 
-function WisataDeskripsiWrapper() {
-  const { id } = require("react-router-dom").useParams();
-  const wisataList = defaultWisataList;
-  const wisata = wisataList.find((w) => w.id === id);
-  return <WisataDeskripsi wisata={wisata} />;
+function WisataDeskripsiWrapper({ wisata }) {
+  const { id } = useParams();
+  const w = wisata.find((w) => w.id === id);
+  return <WisataDeskripsi wisata={w} />;
 }
 
-function AdminBerita() {
+function AdminBerita({ wisata, setWisata }) {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [password, setPassword] = useState("");
   const [berita, setBerita] = useState(() => {
     const saved = localStorage.getItem("beritaList");
     return saved ? JSON.parse(saved) : beritaList;
   });
-  const [wisata, setWisata] = useState(defaultWisataList);
   const [form, setForm] = useState({ judul: "", tanggal: "", ringkasan: "" });
   const [editIndex, setEditIndex] = useState(null);
   const ADMIN_PASS = "kemumu123";
