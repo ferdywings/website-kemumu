@@ -4,11 +4,90 @@ import "./App.css";
 
 // Data wisata
 const defaultWisataList = [
-  
+  {
+    id: "palak-siring",
+    nama: "Air terjun palak siring",
+    img: "/images/palak siring (3).png",
+    lokasi: "https://maps.app.goo.gl/n587iCuDrV66gaKZ7",
+    deskripsi: "Air terjun alami dengan suasana asri dan udara sejuk, cocok untuk piknik keluarga.",
+    galeri: ["/images/palak siring (3).png", "/images/palak siring (2).png", "/images/palak siring (1).png", "/images/palak siring (4).png"],
+    status: "buka"
+  },
+  {
+    id: "lorong-watu",
+    nama: "Lorong Watu",
+    img: "/images/lorong watu.jpg",
+    lokasi: "https://maps.app.goo.gl/FNCfqSNyHmnYWS6MA",
+    deskripsi: "Lorong batu alami yang unik, spot foto favorit wisatawan.",
+    galeri: ["/images/lorong watu.jpg", "/images/lorong watu1.jpg", "/images/lorong watu 2.jpg", "/images/lorong watu 3.jpg"],
+    status: "buka"
+  },
+  {
+    id: "air-goreng",
+    nama: "Siring Irigasi Air Goreng",
+    img: "/images/air siring (2).png",
+    lokasi: "https://maps.app.goo.gl/yTk5H7M2VqgHPBHk7",
+    deskripsi: "Sungai irigasi dengan pemandangan indah dan suasana tenang.",
+    galeri: ["/images/air siring (2).png","/images/air siring (1).png", "/images/air siring (3).png"],
+    status: "buka"
+  },
+  {
+    id: "paul",
+    nama: "Paul",
+    img: "/images/paul (3).png",
+    lokasi: "https://maps.app.goo.gl/ZorDKPJa1d4xNwXG7",
+    deskripsi: "Area wisata dengan panorama alam yang memukau.",
+    galeri: ["/images/paul (3).png", "/images/paul (2).png", "/images/paul (1).png"],
+    status: "buka"
+  },
+  {
+    id: "persawahan",
+    nama: "View Persawahan",
+    img: "/images/sawah (3).png",
+    lokasi: "https://maps.app.goo.gl/KMsfcXLPCgUrsyCj6",
+    deskripsi: "Pemandangan sawah hijau yang luas dan menenangkan.",
+    galeri: ["/images/sawah (3).png", "/images/sawah (2).png", "/images/sawah (1).png", "/images/sawah (4).png"],
+    status: "buka"
+  },
+  {
+    id: "puspa-langka",
+    nama: "Puspa Langka",
+    img: "/images/bunga (1).png",
+    lokasi: "https://maps.app.goo.gl/tvTwD29y9vZm7rfK8",
+    deskripsi: "Taman bunga langka dengan koleksi flora unik.",
+    galeri: ["/images/bunga (1).png", "/images/bunga (2).png"],
+    status: "buka"
+  },
+  {
+    id: "Dam",
+    nama: "Dam",
+    img: "/images/dam (3).png",
+    lokasi: "https://maps.app.goo.gl/fmQPi7arr64zP5A5A",
+    deskripsi: "Taman bunga langka dengan koleksi flora unik.",
+    galeri: ["/images/dam (3).png", "/images/dam (2).png", "/images/dam (1).png", "/images/dam (4).png"],
+    status: "buka"
+  },
 ];
 
 const beritaList = [
-  
+  {
+    id: 1,
+    judul: "Festival Kemumu 2024 Sukses Digelar",
+    tanggal: "2024-06-10",
+    ringkasan: "Festival tahunan Kemumu kembali digelar dengan meriah, menampilkan budaya lokal dan wisata alam."
+  },
+  {
+    id: 2,
+    judul: "Gotong Royong Bersihkan Irigasi",
+    tanggal: "2024-06-05",
+    ringkasan: "Warga Kelurahan Kemumu bersama pemerintah setempat melakukan gotong royong membersihkan saluran irigasi."
+  },
+  {
+    id: 3,
+    judul: "Penanaman Seribu Pohon di Kemumu",
+    tanggal: "2024-05-28",
+    ringkasan: "Aksi penghijauan dengan penanaman seribu pohon di area wisata dan persawahan Kemumu."
+  }
 ];
 
 const anggotaKKN = [
