@@ -207,6 +207,18 @@ function MainApp({ wisata, setWisata }) {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+  useEffect(() => {
+    async function testConnection() {
+      const { data, error } = await supabase.from('wisata').select('*').limit(1);
+      if (error) {
+        console.error('Supabase NOT connected:', error.message);
+      } else {
+        console.log('Supabase connected! Contoh data:', data);
+      }
+    }
+    testConnection();
+  }, []);
+
   return (
     <>
       {/* Header & Navigation */}
@@ -373,7 +385,7 @@ function MainApp({ wisata, setWisata }) {
           <h2>Tempat Wisata Kelurahan Kemumu</h2>
           <p className="wisata-subtitle">Beberapa tempat objek wisata kelurahan kemumu</p>
           <div className="wisata-grid">
-            {wisata.map((w) => (
+            {wisata.map((w, idx) => (
               <div className="wisata-card" key={w.id} style={w.status === 'tutup' ? {opacity:0.6, filter:'grayscale(0.7)'} : {}}>
                 <img src={w.img} alt={w.nama} />
                 <div className="wisata-info">
@@ -580,9 +592,9 @@ function AdminBerita({ wisata, setWisata }) {
             <EditWisataNamaDeskripsi
               key={w.id}
               wisata={w}
-              onSave={(nama, deskripsi) => {
+              onSave={(nama, deskripsi, img) => {
                 const newWisata = [...wisata];
-                newWisata[idx] = { ...newWisata[idx], nama, deskripsi };
+                newWisata[idx] = { ...newWisata[idx], nama, deskripsi, img };
                 setWisata(newWisata);
               }}
             />
@@ -620,40 +632,70 @@ function EditWisataNamaDeskripsi({ wisata, onSave }) {
   const [editMode, setEditMode] = React.useState(false);
   const [nama, setNama] = React.useState(wisata.nama);
   const [deskripsi, setDeskripsi] = React.useState(wisata.deskripsi);
+  const [img, setImg] = React.useState(wisata.img);
+  const [file, setFile] = React.useState(null);
+  const [uploading, setUploading] = React.useState(false);
 
   React.useEffect(() => {
     setNama(wisata.nama);
     setDeskripsi(wisata.deskripsi);
-  }, [wisata.nama, wisata.deskripsi]);
+    setImg(wisata.img);
+  }, [wisata.nama, wisata.deskripsi, wisata.img]);
 
-  const handleSave = () => {
+  const handleFileChange = (e) => {
+    setFile(e.target.files[0]);
+  };
+
+  const handleSave = async () => {
     if (!nama.trim() || !deskripsi.trim()) {
       alert('Nama dan deskripsi tidak boleh kosong!');
       return;
     }
-    onSave(nama, deskripsi);
+    let imgUrl = img;
+    if (file) {
+      setUploading(true);
+      // Upload ke Supabase Storage
+      const fileExt = file.name.split('.').pop();
+      const fileName = `${nama.replace(/\\s+/g, '_').toLowerCase()}_${Date.now()}.${fileExt}`;
+      const { data, error } = await supabase
+        .storage
+        .from('wisata-images')
+        .upload(fileName, file, { upsert: true });
+      if (error) {
+        alert('Upload gambar gagal!');
+        setUploading(false);
+        return;
+      }
+      // Ambil public URL
+      const { data: urlData } = supabase
+        .storage
+        .from('wisata-images')
+        .getPublicUrl(fileName);
+      imgUrl = urlData.publicUrl;
+      setUploading(false);
+    }
+    onSave(nama, deskripsi, imgUrl);
     setEditMode(false);
   };
 
   if (!editMode) {
     return (
       <div className="edit-wisata-card">
-        <div style={{fontWeight:'bold', marginBottom:6}}>{wisata.nama}</div>
-        <div style={{fontSize:'0.95em', color:'#555', marginBottom:8}}>{wisata.deskripsi}</div>
-        <button onClick={() => setEditMode(true)} style={{background:'#1976d2', color:'#fff', border:'none', borderRadius:6, padding:'6px 18px', cursor:'pointer', fontWeight:'bold'}}>Edit</button>
+        <img src={img} alt={nama} style={{width: '100%', maxWidth: 180, borderRadius: 8, marginBottom: 8}} />
+        <div style={{fontWeight:'bold', marginBottom:6}}>{nama}</div>
+        <div style={{fontSize:'0.95em', color:'#555', marginBottom:8}}>{deskripsi}</div>
+        <button onClick={() => setEditMode(true)}>Edit</button>
       </div>
     );
   }
   return (
     <div className="edit-wisata-card">
-      <div style={{marginBottom:6}}>
-        <input value={nama} onChange={e => setNama(e.target.value)} />
-      </div>
-      <div style={{marginBottom:8}}>
-        <textarea value={deskripsi} onChange={e => setDeskripsi(e.target.value)} />
-      </div>
-      <button onClick={handleSave}>Simpan</button>
-      <button className="batal-btn" onClick={() => { setEditMode(false); setNama(wisata.nama); setDeskripsi(wisata.deskripsi); }}>Batal</button>
+      <input value={nama} onChange={e => setNama(e.target.value)} />
+      <textarea value={deskripsi} onChange={e => setDeskripsi(e.target.value)} />
+      <input type="file" accept="image/*" onChange={handleFileChange} />
+      {uploading && <div>Uploading...</div>}
+      <button onClick={handleSave} disabled={uploading}>Simpan</button>
+      <button className="batal-btn" onClick={() => { setEditMode(false); setNama(wisata.nama); setDeskripsi(wisata.deskripsi); setImg(wisata.img); }}>Batal</button>
     </div>
   );
 }
