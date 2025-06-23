@@ -422,7 +422,17 @@ function MainApp({ wisata, setWisata }) {
 }
 
 function App() {
-  const [wisata, setWisata] = useState(defaultWisataList);
+  // Ambil dari localStorage jika ada, jika tidak pakai default
+  const [wisata, setWisata] = useState(() => {
+    const saved = localStorage.getItem("wisataList");
+    return saved ? JSON.parse(saved) : defaultWisataList;
+  });
+
+  // Setiap kali wisata berubah, simpan ke localStorage
+  useEffect(() => {
+    localStorage.setItem("wisataList", JSON.stringify(wisata));
+  }, [wisata]);
+
   return (
     <Router>
       <Routes>
