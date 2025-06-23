@@ -4,103 +4,24 @@ import "./App.css";
 
 // Data wisata
 const defaultWisataList = [
-  {
-    id: "palak-siring",
-    nama: "Air terjun palak siring",
-    img: "/images/palak siring (3).png",
-    lokasi: "https://maps.app.goo.gl/n587iCuDrV66gaKZ7",
-    deskripsi: "Air terjun alami dengan suasana asri dan udara sejuk, cocok untuk piknik keluarga.",
-    galeri: ["/images/palak siring (3).png", "/images/palak siring (2).png", "/images/palak siring (1).png", "/images/palak siring (4).png"],
-    status: "buka"
-  },
-  {
-    id: "lorong-watu",
-    nama: "Lorong Watu",
-    img: "/images/lorong watu.jpg",
-    lokasi: "https://maps.app.goo.gl/FNCfqSNyHmnYWS6MA",
-    deskripsi: "Lorong batu alami yang unik, spot foto favorit wisatawan.",
-    galeri: ["/images/lorong watu.jpg", "/images/lorong watu1.jpg", "/images/lorong watu 2.jpg", "/images/lorong watu 3.jpg"],
-    status: "buka"
-  },
-  {
-    id: "air-goreng",
-    nama: "Siring Irigasi Air Goreng",
-    img: "/images/air siring (2).png",
-    lokasi: "https://maps.app.goo.gl/yTk5H7M2VqgHPBHk7",
-    deskripsi: "Sungai irigasi dengan pemandangan indah dan suasana tenang.",
-    galeri: ["/images/air siring (2).png","/images/air siring (1).png", "/images/air siring (3).png"],
-    status: "buka"
-  },
-  {
-    id: "paul",
-    nama: "Paul",
-    img: "/images/paul (3).png",
-    lokasi: "https://maps.app.goo.gl/ZorDKPJa1d4xNwXG7",
-    deskripsi: "Area wisata dengan panorama alam yang memukau.",
-    galeri: ["/images/paul (3).png", "/images/paul (2).png", "/images/paul (1).png"],
-    status: "buka"
-  },
-  {
-    id: "persawahan",
-    nama: "View Persawahan",
-    img: "/images/sawah (3).png",
-    lokasi: "https://maps.app.goo.gl/KMsfcXLPCgUrsyCj6",
-    deskripsi: "Pemandangan sawah hijau yang luas dan menenangkan.",
-    galeri: ["/images/sawah (3).png", "/images/sawah (2).png", "/images/sawah (1).png", "/images/sawah (4).png"],
-    status: "buka"
-  },
-  {
-    id: "puspa-langka",
-    nama: "Puspa Langka",
-    img: "/images/bunga (1).png",
-    lokasi: "https://maps.app.goo.gl/tvTwD29y9vZm7rfK8",
-    deskripsi: "Taman bunga langka dengan koleksi flora unik.",
-    galeri: ["/images/bunga (1).png", "/images/bunga (2).png"],
-    status: "buka"
-  },
-  {
-    id: "Dam",
-    nama: "Dam",
-    img: "/images/dam (3).png",
-    lokasi: "https://maps.app.goo.gl/fmQPi7arr64zP5A5A",
-    deskripsi: "Taman bunga langka dengan koleksi flora unik.",
-    galeri: ["/images/dam (3).png", "/images/dam (2).png", "/images/dam (1).png", "/images/dam (4).png"],
-    status: "buka"
-  },
+  
 ];
 
 const beritaList = [
-  {
-    id: 1,
-    judul: "Festival Kemumu 2024 Sukses Digelar",
-    tanggal: "2024-06-10",
-    ringkasan: "Festival tahunan Kemumu kembali digelar dengan meriah, menampilkan budaya lokal dan wisata alam."
-  },
-  {
-    id: 2,
-    judul: "Gotong Royong Bersihkan Irigasi",
-    tanggal: "2024-06-05",
-    ringkasan: "Warga Kelurahan Kemumu bersama pemerintah setempat melakukan gotong royong membersihkan saluran irigasi."
-  },
-  {
-    id: 3,
-    judul: "Penanaman Seribu Pohon di Kemumu",
-    tanggal: "2024-05-28",
-    ringkasan: "Aksi penghijauan dengan penanaman seribu pohon di area wisata dan persawahan Kemumu."
-  }
+  
 ];
 
 const anggotaKKN = [
-  { nama: "Revika Putri Asharia", foto: "/images/anggota1.jpg", ig: "https://www.instagram.com/reeppika/profilecard/?igsh=dGM1dG0xMjU4Mjc3" },
-  { nama: "Athiyah Ghina Ridwan", foto: "/images/anggota2.jpg", ig: "https://www.instagram.com/a.ghinaa?igsh=MXNxODY3NGgyM3psMA%3D%3D&utm_source=qr" },
-  { nama: "Saniyyah Zhafirah", foto: "/images/anggota3.jpg", ig: "https://www.instagram.com/sannyaaz?igsh=MWdheHZsY2l6MDUwNg==" },
-  { nama: "Shasa Fatimah Azzahra", foto: "/images/anggota3.jpg", ig: "https://www.instagram.com/shasaazhra?igsh=eXFoZTFhbTQ5cXY3" },
-  { nama: "Fia Dieca Amanda", foto: "/images/anggota3.jpg", ig: "https://www.instagram.com/fiadiecaaa?igsh=bzd3cjd4anhxeGl0" },
-  { nama: "Ferdy Fitriansyah Rowi", foto: "/images/anggota3.jpg", ig: "https://www.instagram.com/ferdi_fitriansyah/profilecard/?igsh=cTFmdW8ya2Y0cXdk" },
-  { nama: "⁠Noval Dwi satria", foto: "/images/anggota3.jpg", ig: "https://www.instagram.com/novalsatria_?igsh=eTFxcnYxbGw5aW42" },
-  { nama: "Muhammad Ikhwan Aulia", foto: "/images/anggota3.jpg", ig: "https://www.instagram.com/mhmdikwan_?igsh=MWNwbGJnMDhqZXF5bA==" },
-  { nama: "M. Fiqritama Duta Pramana", foto: "/images/anggota3.jpg", ig: "https://www.instagram.com/fiqriprmna_?igsh=MWt3ZDcxcDV2djNqbg==" },
-  { nama: "⁠Ahmad Radesta", foto: "/images/anggota3.jpg", ig: "https://www.instagram.com/ahmadrdsta?igsh=NDRoZDFsM21xZm82" },
+  { nama: "Revika Putri Asharia", foto: "/images/pika.jpg", ig: "https://www.instagram.com/reeppika/profilecard/?igsh=dGM1dG0xMjU4Mjc3" },
+  { nama: "Athiyah Ghina Ridwan", foto: "/images/gina.jpg", ig: "https://www.instagram.com/a.ghinaa?igsh=MXNxODY3NGgyM3psMA%3D%3D&utm_source=qr" },
+  { nama: "Saniyyah Zhafirah", foto: "/images/saniyyah.jpg", ig: "https://www.instagram.com/sannyaaz?igsh=MWdheHZsY2l6MDUwNg==" },
+  { nama: "Shasa Fatimah Azzahra", foto: "/images/caca.jpg", ig: "https://www.instagram.com/shasaazhra?igsh=eXFoZTFhbTQ5cXY3" },
+  { nama: "Fia Dieca Amanda", foto: "/images/fia.jpg", ig: "https://www.instagram.com/fiadiecaaa?igsh=bzd3cjd4anhxeGl0" },
+  { nama: "Ferdy Fitriansyah Rowi", foto: "/images/ferdy.jpg", ig: "https://www.instagram.com/ferdi_fitriansyah/profilecard/?igsh=cTFmdW8ya2Y0cXdk" },
+  { nama: "⁠Noval Dwi satria", foto: "/images/nopal.jpg", ig: "https://www.instagram.com/novalsatria_?igsh=eTFxcnYxbGw5aW42" },
+  { nama: "Muhammad Ikhwan Aulia", foto: "/images/ikhwan.jpg", ig: "https://www.instagram.com/mhmdikwan_?igsh=MWNwbGJnMDhqZXF5bA==" },
+  { nama: "M. Fiqritama Duta Pramana", foto: "/images/fikri.jpg", ig: "https://www.instagram.com/fiqriprmna_?igsh=MWt3ZDcxcDV2djNqbg==" },
+  { nama: "⁠Ahmad Radesta", foto: "/images/mamek.jpg", ig: "https://www.instagram.com/ahmadrdsta?igsh=NDRoZDFsM21xZm82" },
   // dst...
 ];
 
@@ -120,7 +41,7 @@ function WisataDeskripsi({ wisata }) {
       </div>
       <div style={{marginTop:'8px', color:'#888', fontSize:'0.95em'}}>Foto {fotoIndex+1} dari {totalFoto}</div>
       <p style={{fontSize:'1.2em', marginTop:'1em'}}>{wisata.deskripsi}</p>
-      <a href={wisata.lokasi} target="_blank" rel="noopener noreferrer" className="wisata-lokasi-btn">
+      <a href={wisata.lokasi} target="_blank" rel="noopener noreferrer" className="wisata-lokasi-btn" style={wisata.status === 'tutup' ? {pointerEvents:'none', opacity:0.5, cursor:'not-allowed'} : {}}>
         <i className="fas fa-map-marker-alt"></i> Lihat Lokasi di Maps
       </a>
       {wisata.status === 'tutup' && <div style={{color:'#e74c3c', marginTop:'1em', fontWeight:'bold'}}>Wisata ini sedang TUTUP sementara.</div>}
@@ -347,10 +268,11 @@ function MainApp() {
               <div className="layanan-profil-text">
                 <h1>Kelompok Sadar Pariwisata</h1>
                 <p className="layanan-profil-sambutan">
-                  Selamat Datang di Website Dinas Pariwisata Kota Bengkulu
+                  Selamat Datang di Website Pariwisata Kelurahan Kemumu
                 </p>
                 <p>
-                  Website ini merupakan sebuah sarana media pelayanan informasi Kepariwisataan bagi para pengelola di lingkungan Pemerintah Kota Bengkulu yang bertujuan untuk memberikan pelayanan informasi kepada para pengelola Kepariwisataan Pemerintah Kota Bengkulu dan masyarakat luas melalui media elektronik.
+                Website ini merupakan sarana media pelayanan informasi kepariwisataan bagi para pengelola dan masyarakat di lingkungan Kelurahan Kemumu, Kecamatan Arma Jaya, Kabupaten Bengkulu Utara.
+                Tujuan utama dari website ini adalah untuk memberikan informasi terkini seputar potensi wisata alam, budaya, serta kegiatan masyarakat Kemumu melalui media elektronik, sehingga dapat dijangkau oleh wisatawan lokal maupun luar daerah secara lebih mudah dan cepat.
                 </p>
                 <p className="layanan-profil-nama">
                   <b>Kelompok Sadar Pariwisata</b>
@@ -394,11 +316,12 @@ function MainApp() {
                     href={w.lokasi}
                     target="_blank"
                     rel="noopener noreferrer"
+                    style={w.status === 'tutup' ? {pointerEvents:'none', opacity:0.5, cursor:'not-allowed'} : {}}
                   >
                     <i className="fas fa-map-marker-alt" style={{ marginRight: "6px" }}></i>
                     Petunjuk Lokasi
                   </a>
-                  <Link to={`/wisata/${w.id}`} className="wisata-deskripsi-btn">Deskripsi</Link>
+                  <Link to={`/wisata/${w.id}`} className="wisata-deskripsi-btn" style={w.status === 'tutup' ? {pointerEvents:'none', opacity:0.5, cursor:'not-allowed'} : {}}>Deskripsi</Link>
                 </div>
               </div>
             ))}
@@ -563,6 +486,23 @@ function AdminBerita() {
           ))}
         </div>
       </div>
+      {/* Panel edit nama dan deskripsi wisata */}
+      <div style={{marginBottom:'2em'}}>
+        <h3>Edit Nama & Deskripsi Wisata</h3>
+        <div style={{display:'flex', flexWrap:'wrap', gap:'18px'}}>
+          {wisata.map((w, idx) => (
+            <EditWisataNamaDeskripsi
+              key={w.id}
+              wisata={w}
+              onSave={(nama, deskripsi) => {
+                const newWisata = [...wisata];
+                newWisata[idx] = { ...newWisata[idx], nama, deskripsi };
+                setWisata(newWisata);
+              }}
+            />
+          ))}
+        </div>
+      </div>
       {/* Form berita dan daftar berita */}
       <form onSubmit={handleSubmit} className="admin-berita-form">
         <input name="judul" placeholder="Judul berita" value={form.judul} onChange={handleChange} />
@@ -585,6 +525,49 @@ function AdminBerita() {
           </div>
         ))}
       </div>
+    </div>
+  );
+}
+
+// Komponen untuk edit nama dan deskripsi wisata
+function EditWisataNamaDeskripsi({ wisata, onSave }) {
+  const [editMode, setEditMode] = React.useState(false);
+  const [nama, setNama] = React.useState(wisata.nama);
+  const [deskripsi, setDeskripsi] = React.useState(wisata.deskripsi);
+
+  React.useEffect(() => {
+    setNama(wisata.nama);
+    setDeskripsi(wisata.deskripsi);
+  }, [wisata.nama, wisata.deskripsi]);
+
+  const handleSave = () => {
+    if (!nama.trim() || !deskripsi.trim()) {
+      alert('Nama dan deskripsi tidak boleh kosong!');
+      return;
+    }
+    onSave(nama, deskripsi);
+    setEditMode(false);
+  };
+
+  if (!editMode) {
+    return (
+      <div className="edit-wisata-card">
+        <div style={{fontWeight:'bold', marginBottom:6}}>{wisata.nama}</div>
+        <div style={{fontSize:'0.95em', color:'#555', marginBottom:8}}>{wisata.deskripsi}</div>
+        <button onClick={() => setEditMode(true)} style={{background:'#1976d2', color:'#fff', border:'none', borderRadius:6, padding:'6px 18px', cursor:'pointer', fontWeight:'bold'}}>Edit</button>
+      </div>
+    );
+  }
+  return (
+    <div className="edit-wisata-card">
+      <div style={{marginBottom:6}}>
+        <input value={nama} onChange={e => setNama(e.target.value)} />
+      </div>
+      <div style={{marginBottom:8}}>
+        <textarea value={deskripsi} onChange={e => setDeskripsi(e.target.value)} />
+      </div>
+      <button onClick={handleSave}>Simpan</button>
+      <button className="batal-btn" onClick={() => { setEditMode(false); setNama(wisata.nama); setDeskripsi(wisata.deskripsi); }}>Batal</button>
     </div>
   );
 }
