@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { BrowserRouter as Router, Route, Routes, Link, useNavigate, useLocation, useParams } from "react-router-dom";
 import "./App.css";
+import { supabase } from './supabaseClient';
 
 // Data wisata
 const defaultWisataList = [
@@ -422,23 +423,42 @@ function MainApp({ wisata, setWisata }) {
 }
 
 function App() {
-  // Ambil dari localStorage jika ada, jika tidak pakai default
-  const [wisata, setWisata] = useState(() => {
-    const saved = localStorage.getItem("wisataList");
-    return saved ? JSON.parse(saved) : defaultWisataList;
-  });
+  const [wisata, setWisata] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  // Setiap kali wisata berubah, simpan ke localStorage
+  // Ambil data dari Supabase saat pertama kali load
   useEffect(() => {
-    localStorage.setItem("wisataList", JSON.stringify(wisata));
-  }, [wisata]);
+    const fetchWisata = async () => {
+      let { data, error } = await supabase.from('wisata').select('*');
+      if (error) {
+        setWisata(defaultWisataList); // fallback jika error
+      } else {
+        setWisata(data.length ? data : defaultWisataList);
+      }
+      setLoading(false);
+    };
+    fetchWisata();
+  }, []);
+
+  // Fungsi update wisata ke Supabase
+  const updateWisata = async (newList) => {
+    setWisata(newList);
+    // Hapus semua data lama
+    await supabase.from('wisata').delete().neq('id', '');
+    // Insert data baru
+    for (const w of newList) {
+      await supabase.from('wisata').insert([w]);
+    }
+  };
+
+  if (loading) return <div>Loading...</div>;
 
   return (
     <Router>
       <Routes>
-        <Route path="/*" element={<MainApp wisata={wisata} setWisata={setWisata} />} />
+        <Route path="/*" element={<MainApp wisata={wisata} setWisata={updateWisata} />} />
         <Route path="/wisata/:id" element={<WisataDeskripsiWrapper wisata={wisata} />} />
-        <Route path="/admin-berita" element={<AdminBerita wisata={wisata} setWisata={setWisata} />} />
+        <Route path="/admin-berita" element={<AdminBerita wisata={wisata} setWisata={updateWisata} />} />
         <Route path="/kkn-kelompok" element={<KKNKelompokPage />} />
       </Routes>
     </Router>
