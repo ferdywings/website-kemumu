@@ -120,11 +120,6 @@ function WisataDeskripsi({ wisata }) {
         <button onClick={nextFoto} className="carousel-btn" aria-label="Berikutnya">&#8594;</button>
       </div>
       <div style={{marginTop:'8px', color:'#888', fontSize:'0.95em'}}>Foto {fotoIndex+1} dari {totalFoto}</div>
-      <p style={{fontSize:'1.2em', marginTop:'1em'}}>{wisata.deskripsi}</p>
-      <a href={wisata.lokasi} target="_blank" rel="noopener noreferrer" className="wisata-lokasi-btn" style={wisata.status === 'tutup' ? {pointerEvents:'none', opacity:0.5, cursor:'not-allowed'} : {}}>
-        <i className="fas fa-map-marker-alt"></i> Lihat Lokasi di Maps
-      </a>
-      {wisata.status === 'tutup' && <div style={{color:'#e74c3c', marginTop:'1em', fontWeight:'bold'}}>Wisata ini sedang TUTUP sementara.</div>}
       <div style={{marginTop:'2em'}}>
         <Link to="/" className="back-btn">Kembali ke Wisata</Link>
       </div>
@@ -167,12 +162,11 @@ function MainApp({ wisata, setWisata }) {
   });
 
   useEffect(() => {
-    const syncBerita = () => {
-      const saved = localStorage.getItem("beritaList");
-      setBerita(saved ? JSON.parse(saved) : beritaList);
+    const fetchBerita = async () => {
+      let { data, error } = await supabase.from('berita').select('*').order('tanggal', { ascending: false });
+      if (!error) setBerita(data);
     };
-    window.addEventListener("storage", syncBerita);
-    return () => window.removeEventListener("storage", syncBerita);
+    fetchBerita();
   }, []);
 
   // Fungsi untuk handle klik nav agar langsung aktif
@@ -471,7 +465,7 @@ function App() {
       <Routes>
         <Route path="/*" element={<MainApp wisata={wisata} setWisata={updateWisata} />} />
         <Route path="/wisata/:id" element={<WisataDeskripsiWrapper wisata={wisata} />} />
-        <Route path="/admin-berita" element={<AdminBerita wisata={wisata} setWisata={updateWisata} />} />
+        <Route path="/admin-berita" element={<AdminBerita />} />
         <Route path="/kkn-kelompok" element={<KKNKelompokPage />} />
       </Routes>
     </Router>
@@ -484,22 +478,25 @@ function WisataDeskripsiWrapper({ wisata }) {
   return <WisataDeskripsi wisata={w} />;
 }
 
-function AdminBerita({ wisata, setWisata }) {
+function AdminBerita() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [password, setPassword] = useState("");
-  const [berita, setBerita] = useState(() => {
-    const saved = localStorage.getItem("beritaList");
-    return saved ? JSON.parse(saved) : beritaList;
-  });
+  const [berita, setBerita] = useState([]);
+  const [loadingBerita, setLoadingBerita] = useState(true);
   const [form, setForm] = useState({ judul: "", tanggal: "", ringkasan: "" });
   const [editIndex, setEditIndex] = useState(null);
   const ADMIN_PASS = "kemumu123";
   const navigate = useNavigate();
 
-  // Simpan ke localStorage setiap ada perubahan berita saja
+  // Fetch berita dari Supabase saat mount
   useEffect(() => {
-    localStorage.setItem("beritaList", JSON.stringify(berita));
-  }, [berita]);
+    const fetchBerita = async () => {
+      let { data, error } = await supabase.from('berita').select('*').order('tanggal', { ascending: false });
+      if (!error) setBerita(data || []);
+      setLoadingBerita(false);
+    };
+    fetchBerita();
+  }, []);
 
   const handleLogin = (e) => {
     e.preventDefault();
@@ -511,18 +508,28 @@ function AdminBerita({ wisata, setWisata }) {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (!form.judul || !form.tanggal || !form.ringkasan) return alert("Judul, tanggal, dan ringkasan wajib diisi!");
+    setLoadingBerita(true);
     if (editIndex !== null) {
-      const newBerita = [...berita];
-      newBerita[editIndex] = { ...form, id: berita[editIndex].id };
-      setBerita(newBerita);
-      setEditIndex(null);
+      // Update berita
+      const beritaToUpdate = berita[editIndex];
+      await supabase.from('berita').update({
+        judul: form.judul,
+        tanggal: form.tanggal,
+        ringkasan: form.ringkasan
+      }).eq('id', beritaToUpdate.id);
     } else {
-      setBerita([{ ...form, id: Date.now() }, ...berita]);
+      // Tambah berita baru
+      await supabase.from('berita').insert([form]);
     }
+    // Fetch ulang data
+    const { data } = await supabase.from('berita').select('*').order('tanggal', { ascending: false });
+    setBerita(data || []);
     setForm({ judul: "", tanggal: "", ringkasan: "" });
+    setEditIndex(null);
+    setLoadingBerita(false);
   };
 
   const handleEdit = (idx) => {
@@ -530,9 +537,15 @@ function AdminBerita({ wisata, setWisata }) {
     setEditIndex(idx);
   };
 
-  const handleDelete = (idx) => {
+  const handleDelete = async (idx) => {
     if (window.confirm("Hapus berita ini?")) {
-      setBerita(berita.filter((_, i) => i !== idx));
+      setLoadingBerita(true);
+      const beritaToDelete = berita[idx];
+      await supabase.from('berita').delete().eq('id', beritaToDelete.id);
+      // Fetch ulang data
+      const { data } = await supabase.from('berita').select('*').order('tanggal', { ascending: false });
+      setBerita(data || []);
+      setLoadingBerita(false);
     }
   };
 
@@ -566,42 +579,6 @@ function AdminBerita({ wisata, setWisata }) {
         <h2>Panel Admin</h2>
         <button onClick={handleLogout} className="admin-logout">Logout</button>
       </div>
-      {/* Panel buka/tutup wisata */}
-      <div style={{marginBottom:'2em'}}>
-        <h3>Atur Status Wisata</h3>
-        <div style={{display:'flex', flexWrap:'wrap', gap:'18px'}}>
-          {wisata.map((w, idx) => (
-            <div key={w.id} style={{background:'#f7fafc', borderRadius:8, boxShadow:'0 1px 6px #0001', padding:'12px 18px', minWidth:220}}>
-              <div style={{fontWeight:'bold', marginBottom:6}}>{w.nama}</div>
-              <div>Status: <span style={{color: w.status === 'buka' ? '#43a047' : '#e74c3c', fontWeight:'bold'}}>{w.status === 'buka' ? 'Buka' : 'Tutup'}</span></div>
-              <button onClick={() => {
-                const newWisata = [...wisata];
-                newWisata[idx].status = newWisata[idx].status === 'buka' ? 'tutup' : 'buka';
-                setWisata(newWisata);
-              }} style={{marginTop:8, background:w.status==='buka'?'#e74c3c':'#43a047', color:'#fff', border:'none', borderRadius:6, padding:'6px 18px', cursor:'pointer', fontWeight:'bold'}}>
-                {w.status === 'buka' ? 'Tutup' : 'Buka'}
-              </button>
-            </div>
-          ))}
-        </div>
-      </div>
-      {/* Panel edit nama dan deskripsi wisata */}
-      <div style={{marginBottom:'2em'}}>
-        <h3>Edit Nama & Deskripsi Wisata</h3>
-        <div style={{display:'flex', flexWrap:'wrap', gap:'18px'}}>
-          {wisata.map((w, idx) => (
-            <EditWisataNamaDeskripsi
-              key={w.id}
-              wisata={w}
-              onSave={(nama, deskripsi, img) => {
-                const newWisata = [...wisata];
-                newWisata[idx] = { ...newWisata[idx], nama, deskripsi, img };
-                setWisata(newWisata);
-              }}
-            />
-          ))}
-        </div>
-      </div>
       {/* Form berita dan daftar berita */}
       <form onSubmit={handleSubmit} className="admin-berita-form">
         <input name="judul" placeholder="Judul berita" value={form.judul} onChange={handleChange} />
@@ -611,7 +588,8 @@ function AdminBerita({ wisata, setWisata }) {
         {editIndex !== null && <button type="button" onClick={() => { setForm({ judul: "", tanggal: "", ringkasan: "" }); setEditIndex(null); }}>Batal</button>}
       </form>
       <div className="admin-berita-list">
-        {berita.length === 0 && <div style={{textAlign:'center',color:'#888'}}>Belum ada berita.</div>}
+        {loadingBerita && <div style={{textAlign:'center',color:'#888'}}>Loading...</div>}
+        {berita.length === 0 && !loadingBerita && <div style={{textAlign:'center',color:'#888'}}>Belum ada berita.</div>}
         {berita.map((b, idx) => (
           <div className="admin-berita-item" key={b.id}>
             <div>
@@ -624,79 +602,6 @@ function AdminBerita({ wisata, setWisata }) {
           </div>
         ))}
       </div>
-    </div>
-  );
-}
-
-// Komponen untuk edit nama dan deskripsi wisata
-function EditWisataNamaDeskripsi({ wisata, onSave }) {
-  const [editMode, setEditMode] = React.useState(false);
-  const [nama, setNama] = React.useState(wisata.nama);
-  const [deskripsi, setDeskripsi] = React.useState(wisata.deskripsi);
-  const [img, setImg] = React.useState(wisata.img);
-  const [file, setFile] = React.useState(null);
-  const [uploading, setUploading] = React.useState(false);
-
-  React.useEffect(() => {
-    setNama(wisata.nama);
-    setDeskripsi(wisata.deskripsi);
-    setImg(wisata.img);
-  }, [wisata.nama, wisata.deskripsi, wisata.img]);
-
-  const handleFileChange = (e) => {
-    setFile(e.target.files[0]);
-  };
-
-  const handleSave = async () => {
-    if (!nama.trim() || !deskripsi.trim()) {
-      alert('Nama dan deskripsi tidak boleh kosong!');
-      return;
-    }
-    let imgUrl = img;
-    if (file) {
-      setUploading(true);
-      // Upload ke Supabase Storage
-      const fileExt = file.name.split('.').pop();
-      const fileName = `${nama.replace(/\\s+/g, '_').toLowerCase()}_${Date.now()}.${fileExt}`;
-      const { data, error } = await supabase
-        .storage
-        .from('wisata-images')
-        .upload(fileName, file, { upsert: true });
-      if (error) {
-        alert('Upload gambar gagal!');
-        setUploading(false);
-        return;
-      }
-      // Ambil public URL
-      const { data: urlData } = supabase
-        .storage
-        .from('wisata-images')
-        .getPublicUrl(fileName);
-      imgUrl = urlData.publicUrl;
-      setUploading(false);
-    }
-    onSave(nama, deskripsi, imgUrl);
-    setEditMode(false);
-  };
-
-  if (!editMode) {
-    return (
-      <div className="edit-wisata-card">
-        <img src={img} alt={nama} style={{width: '100%', maxWidth: 180, borderRadius: 8, marginBottom: 8}} />
-        <div style={{fontWeight:'bold', marginBottom:6}}>{nama}</div>
-        <div style={{fontSize:'0.95em', color:'#555', marginBottom:8}}>{deskripsi}</div>
-        <button onClick={() => setEditMode(true)}>Edit</button>
-      </div>
-    );
-  }
-  return (
-    <div className="edit-wisata-card">
-      <input value={nama} onChange={e => setNama(e.target.value)} />
-      <textarea value={deskripsi} onChange={e => setDeskripsi(e.target.value)} />
-      <input type="file" accept="image/*" onChange={handleFileChange} />
-      {uploading && <div>Uploading...</div>}
-      <button onClick={handleSave} disabled={uploading}>Simpan</button>
-      <button className="batal-btn" onClick={() => { setEditMode(false); setNama(wisata.nama); setDeskripsi(wisata.deskripsi); setImg(wisata.img); }}>Batal</button>
     </div>
   );
 }
