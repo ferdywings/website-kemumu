@@ -438,29 +438,30 @@ function App() {
   const [wisata, setWisata] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // Ambil data dari Supabase saat pertama kali load
+  // Fungsi fetch data dari Supabase
+  const fetchWisata = async () => {
+    let { data, error } = await supabase.from('wisata').select('*');
+    if (error) {
+      setWisata(defaultWisataList);
+    } else {
+      setWisata(data.length ? data : defaultWisataList);
+    }
+    setLoading(false);
+  };
+
   useEffect(() => {
-    const fetchWisata = async () => {
-      let { data, error } = await supabase.from('wisata').select('*');
-      if (error) {
-        setWisata(defaultWisataList); // fallback jika error
-      } else {
-        setWisata(data.length ? data : defaultWisataList);
-      }
-      setLoading(false);
-    };
     fetchWisata();
   }, []);
 
   // Fungsi update wisata ke Supabase
   const updateWisata = async (newList) => {
-    setWisata(newList);
-    // Hapus semua data lama
+    setLoading(true);
     await supabase.from('wisata').delete().neq('id', '');
-    // Insert data baru
     for (const w of newList) {
       await supabase.from('wisata').insert([w]);
     }
+    // Setelah update, fetch ulang data dari Supabase
+    await fetchWisata();
   };
 
   if (loading) return <div>Loading...</div>;
